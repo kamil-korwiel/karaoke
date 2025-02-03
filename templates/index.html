@@ -9,6 +9,14 @@
   <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body>
-    <ul id="todos" hx-get="/todos" hx-swap="innerHTML" hx-trigger="load"></ul>
+  <h1>Karaoke</h1>
+  <!--  hx-swap is for targeted tag by id  -->
+  <form hx-post="/url" hx-target="#url-show-container" hx-swap="outerHTML" hx-on:htmx:after-request="this.reset()">
+    <!-- important url == url in python -->
+    <input type="text" name="url" placeholder="I'd like to...">
+    <button type="submit">Add</button>
+  </form>
+  <!-- <button hx-get="/todos" hx-target="#todos-container" hx-swap="outerHTML">Load Todos</button> -->
+  {% include 'urlshow.html' %}
 </body>
 </html>
