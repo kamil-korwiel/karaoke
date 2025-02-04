@@ -17,6 +17,16 @@
     <button type="submit">Add</button>
   </form>
   <!-- <button hx-get="/todos" hx-target="#todos-container" hx-swap="outerHTML">Load Todos</button> -->
+  
   {% include 'urlshow.html' %}
+  <button hx-get="/audio" hx-trigger="click" hx-target="#audio-container" hx-swap="innerHTML">
+    Load & Play Audio
+  </button>
+  
+  <div id="audio-container"></div>
+
+  
+
+  
 </body>
 </html>

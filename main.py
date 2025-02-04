@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
-# from fastapi.staticfiles import StaticFiles
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 # from fastapi.encoders import jsonable_encoder
@@ -15,11 +15,14 @@ from fastapi import FastAPI, Form, Request, Header
 
 
 
-url_link = Url(url="nie")
+
+
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+url_link = Url(url="nie")
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
@@ -42,6 +45,12 @@ async def create_todo(request: Request, url: Annotated[str, Form()]):
         request=request, name="urlshow.html", context={"url": url_link}
     )
 
+@app.get("/audio", response_class=HTMLResponse)
+async def get_audio(request: Request, hx_request: Annotated[Union[str, None], Header()] = None):
+    if hx_request:
+        return templates.TemplateResponse(
+            request=request, name="audio.html"
+        )
 
 # @app.put("/todos/{todo_id}", response_class=HTMLResponse)
 # async def update_todo(request: Request, todo_id: str, text: Annotated[str, Form()]):
