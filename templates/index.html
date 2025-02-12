@@ -7,26 +7,31 @@
   <title>FastAPI + HTMX</title>
   <script src="https://unpkg.com/htmx.org@2.0.0" integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', path='css/BASE.css' ) }}">
 </head>
 <body>
-  <h1>Karaoke</h1>
-  <!--  hx-swap is for targeted tag by id  -->
-  <form hx-post="/url" hx-target="#url-show-container" hx-swap="outerHTML" hx-on:htmx:after-request="this.reset()">
-    <!-- important url == url in python -->
-    <input type="text" name="url" placeholder="I'd like to...">
-    <button type="submit">Add</button>
-  </form>
-  <!-- <button hx-get="/todos" hx-target="#todos-container" hx-swap="outerHTML">Load Todos</button> -->
+  <div class="base-flex-container">
+    <div class="nav"></div>
+    <div class="main">
+      <h1>Karaoke</h1>
+      <!--  hx-swap is for targeted tag by id  -->
+      
+      <form hx-post="/url" hx-target="#url-show-container" hx-swap="outerHTML" hx-on:htmx:after-request="this.reset()">
+        <!-- important url == url in python -->
+        <input type="text" name="url" placeholder="Give me a YT url ...">
+        <button type="submit">Add</button>
+      </form>
+      
+      <button hx-get="/audio" hx-trigger="click" hx-target="#audio-container" hx-swap="innerHTML">
+        Load & Play Audio
+      </button>
+      <div id="audio-container"></div>
+      {% include 'urlshow.html' %}
+    </div>
+    <div class="footer"></div>
+  </div>
   
-  {% include 'urlshow.html' %}
-  <button hx-get="/audio" hx-trigger="click" hx-target="#audio-container" hx-swap="innerHTML">
-    Load & Play Audio
-  </button>
   
-  <div id="audio-container"></div>
-
-  
-
   
 </body>
 </html>
