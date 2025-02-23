@@ -1,1 +1,3 @@
 fastapi[standard]
+loguru
+yt_dlp

@@ -15,7 +15,7 @@ def check_url(url:str) -> bool:
     else:
         return False
 
-def extract_info_for_online_media(logger, input_url=None) -> dict:
+def extract_info_for_online_media(logger, input_url) -> dict:
     extracted_info = {}
     
     logger.info(f"Extracting info for input_url: {input_url}")
@@ -29,8 +29,9 @@ def extract_info_for_online_media(logger, input_url=None) -> dict:
 def get_info_artist_title(info:dict[str,str|int|list]) -> dict[str,str|int|list]:
     artist, song = info['title'].split('-')
     return {
-        'name_artist':artist,
-        'name_song':song,
+        'url': info['webpage_url'],
+        'name_artist':artist.strip(),
+        'name_song':song.strip(),
         'full_title':info['categories'],
         'duration':info['duration'],
         'channel':info['channel'],
@@ -66,7 +67,6 @@ def download_video(logger, url:str, path_folder:str, output_filename_no_extensio
             logger.error("No files found matching the download pattern.")
             return None
 
-
 def convert_to_wav(logger, path_input_filename):
     """Convert input audio to WAV format, with input validation."""
     # Validate input file exists and is readable
@@ -93,17 +93,28 @@ def convert_to_wav(logger, path_input_filename):
     os.system(ffmpeg_command)
     return path_output
 
-
 def main():
     # pass
     url = "https://www.youtube.com/watch?v=WrpwegGf75Q"
     split_url = parse.urlsplit(url)
     print(split_url)
     
+    urls = [
+        'https://www.youtube.com/watch?v=D4jguVJ2ldY',
+        'https://www.youtube.com/watch?v=UD4jRK5j2Ow',
+        'https://www.youtube.com/watch?v=8FSpGs7W5wY',
+        'https://www.youtube.com/watch?v=2Kt8HP1VEPU',
+        'https://www.youtube.com/watch?v=-loJ3JJ6hIA'
+    ]
+
+    for url in urls:
+        if check_url(url):
+            data = extract_info_for_online_media(logger,url)
+            audio_info = get_info_artist_title(data)
 
     # print(download_video(logger,'https://www.youtube.com/watch?v=WrpwegGf75Q','./db/audio/','Mitski - Washing machine heart (slowed)'))
     # print(Path("./db/audio"))
-    convert_to_wav(logger,'db\\audio\Mitski - Washing machine heart (slowed)\Mitski - Washing machine heart (slowed).webm')
+    # convert_to_wav(logger,'db\\audio\Mitski - Washing machine heart (slowed)\Mitski - Washing machine heart (slowed).webm')
     # data = extract_info_for_online_media(logger,input_url='https://www.youtube.com/watch?v=WrpwegGf75Q')
     # print(get_info_artist_title(data))
     # json_string = json.dumps(data,indent=4)
