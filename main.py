@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -14,10 +14,12 @@ from typing import Annotated, Union
 from fastapi import FastAPI, Header
 from fastapi import FastAPI, Form, Request, Header
 
-from sqlmodel import SQLModel, create_engine , Session , select
+from sqlmodel import create_engine , Session 
 
+import os
 from loguru import logger
-from utility import download_video, check_url
+from utility import download_video, check_url, init_db
+from pathlib import Path
 
 """ This is set up database """
 sqlite_file_name = "database.db"
@@ -25,24 +27,8 @@ sqlite_url = f"sqlite:///{sqlite_file_name}"
 
 engine = create_engine(sqlite_url, echo=True)
 
-SQLModel.metadata.create_all(engine)
 
-# audio_data = Audio(
-#     id=1,
-#     name_artist="Mitski",
-#     name_song="Washing machine heart (slowed)",
-#     full_title="Mitski - Washing machine heart (slowed)",
-#     duration=157,
-#     channel="Kawwko",
-#     url="https://www.youtube.com/watch?v=WrpwegGf75Q",
-#     file_path=r"\audio\Mitski - Washing machine heart (slowed)\Mitski - Washing machine heart (slowed).webm.wav",
-# )
-
-# with Session(engine) as session:
-#     session.add(audio_data)
-#     session.commit()
-
-
+init_db(engine,sqlite_file_name,sqlite_url)
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -52,6 +38,16 @@ url_link = Url(url="")
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     return templates.TemplateResponse(request=request, name="index.html", context={})
+
+@app.get("/download/")
+async def download_file():
+    with Session(engine) as session:
+        audio_info = session.get(Audio,1)
+    file_path = Path(audio_info.file_path)
+    logger.debug(file_path)
+    if not os.path.exists(file_path):
+        return {"error": "File not found"}
+    return FileResponse(file_path,media_type="audio/wav", filename=audio_info.full_title)
 
 
 # @app.get("/url", response_class=HTMLResponse)

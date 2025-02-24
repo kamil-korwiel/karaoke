@@ -1,3 +1,5 @@
+from sqlalchemy import Engine
+from sqlmodel import SQLModel, Session
 import yt_dlp.YoutubeDL as ydl
 import glob
 import os
@@ -6,6 +8,8 @@ from loguru import logger
 import json 
 from urllib import parse
 from pathlib import Path
+
+from models.audio import Audio
 
 
 
@@ -93,34 +97,54 @@ def convert_to_wav(logger, path_input_filename):
     os.system(ffmpeg_command)
     return path_output
 
+def init_db(engine, name_file, DATABASE_URL:str):
+    # Check if the database file exists
+    db_exists = os.path.exists(name_file)
+
+    # Create tables only if they don't exist
+    if not db_exists:
+        logger.info("Initializing database...")
+        SQLModel.metadata.create_all(engine)
+
+        path_file = Path('./db/audio/Mitski - Washing machine heart (slowed)/Mitski - Washing machine heart (slowed).wav')
+
+        audio_data = Audio(
+            id=1,
+            name_artist="Mitski",
+            name_song="Washing machine heart (slowed)",
+            full_title="Mitski - Washing machine heart (slowed)",
+            duration=157,
+            channel="Kawwko",
+            url="https://www.youtube.com/watch?v=WrpwegGf75Q",
+            file_path=str(path_file),
+        )
+
+        with Session(engine) as session:
+            session.add(audio_data)
+            session.commit()
+    else:
+        logger.info("Database already exists, skipping initialization.")
+
+
 def main():
-    # pass
-    url = "https://www.youtube.com/watch?v=WrpwegGf75Q"
-    split_url = parse.urlsplit(url)
-    print(split_url)
+    pass
+    # url = "https://www.youtube.com/watch?v=WrpwegGf75Q"
+    # split_url = parse.urlsplit(url)
+    # print(split_url)
     
-    urls = [
-        'https://www.youtube.com/watch?v=D4jguVJ2ldY',
-        'https://www.youtube.com/watch?v=UD4jRK5j2Ow',
-        'https://www.youtube.com/watch?v=8FSpGs7W5wY',
-        'https://www.youtube.com/watch?v=2Kt8HP1VEPU',
-        'https://www.youtube.com/watch?v=-loJ3JJ6hIA'
-    ]
+    # urls = [
+    #     'https://www.youtube.com/watch?v=D4jguVJ2ldY',
+    #     'https://www.youtube.com/watch?v=UD4jRK5j2Ow',
+    #     'https://www.youtube.com/watch?v=8FSpGs7W5wY',
+    #     'https://www.youtube.com/watch?v=2Kt8HP1VEPU',
+    #     'https://www.youtube.com/watch?v=-loJ3JJ6hIA'
+    # ]
 
-    for url in urls:
-        if check_url(url):
-            data = extract_info_for_online_media(logger,url)
-            audio_info = get_info_artist_title(data)
+    # for url in urls:
+    #     if check_url(url):
+    #         data = extract_info_for_online_media(logger,url)
+    #         audio_info = get_info_artist_title(data)
 
-    # print(download_video(logger,'https://www.youtube.com/watch?v=WrpwegGf75Q','./db/audio/','Mitski - Washing machine heart (slowed)'))
-    # print(Path("./db/audio"))
-    # convert_to_wav(logger,'db\\audio\Mitski - Washing machine heart (slowed)\Mitski - Washing machine heart (slowed).webm')
-    # data = extract_info_for_online_media(logger,input_url='https://www.youtube.com/watch?v=WrpwegGf75Q')
-    # print(get_info_artist_title(data))
-    # json_string = json.dumps(data,indent=4)
-    # print(json_string)
-    # with open("data_artist.json", "w") as file:
-    #     json.dump(data, file,indent=4)
 
 
 if __name__ == "__main__":

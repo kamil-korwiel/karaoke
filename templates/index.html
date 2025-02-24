@@ -25,6 +25,21 @@
         Load & Play Audio
       </button>
       <div id="audio-container"></div>
+
+      <button id="download-btn" hx-get="/download/" hx-trigger="click" hx-swap="none" onclick="window.location='/download/'">
+        Download File
+      </button>
+
+      <script>
+        document.getElementById("download-btn").addEventListener("click", function (event) {
+            event.preventDefault();  // Prevent default navigation
+            let link = document.createElement("a");
+            link.href = "/download/";  // Set FastAPI download URL
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);  // Clean up after clicking
+        });
+    </script>
       
       <!-- {% include 'urlshow.html' %} -->
     </div>
