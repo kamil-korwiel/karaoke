@@ -30,13 +30,17 @@ def extract_info_for_online_media(logger, input_url) -> dict:
 
     return extracted_info
 
-def get_info_artist_title(info:dict[str,str|int|list]) -> dict[str,str|int|list]:
-    artist, song = info['title'].split('-')
+def get_info(info:dict[str,str|int|list]) -> dict[str,str|int|list]:
+    title = info['title'].split('-')
+    artist = None 
+    song = None 
+    if(len(title) == 2):
+        artist, song = title
     return {
         'url': info['webpage_url'],
-        'name_artist':artist.strip(),
-        'name_song':song.strip(),
-        'full_title':info['categories'],
+        'name_artist':artist.strip() if artist else None,
+        'name_song':song.strip() if song else None,
+        'full_title':info['title'],
         'duration':info['duration'],
         'channel':info['channel'],
         'categories':info['categories'],
@@ -86,8 +90,8 @@ def convert_to_wav(logger, path_input_filename):
     logger.debug(probe_output)
     if "codec_type=audio" not in probe_output:
         raise Exception(f"No valid audio stream found in file: {path_input_filename}")
-
-    path_output = f"{path_input_filename}" + ".wav"
+    path_file = Path(path_input_filename)
+    path_output = f"{(path_file.parent).joinpath(path_file.stem)}" + ".wav"
     logger.info(f"Converting input media to audio WAV file")
     # Path to the Windows PyInstaller frozen bundled ffmpeg.exe, or the system-installed FFmpeg binary on Mac/Linux
     ffmpeg_path = os.path.join(sys._MEIPASS, "ffmpeg.exe") if getattr(sys, "frozen", False) else "ffmpeg"
@@ -143,7 +147,11 @@ def main():
     # for url in urls:
     #     if check_url(url):
     #         data = extract_info_for_online_media(logger,url)
-    #         audio_info = get_info_artist_title(data)
+    #         audio_info = get_info(data)
+
+    full_path_file = Path("./db/audio/Mitski - Washing machine heart (slowed)/Mitski - Washing machine heart (slowed).webm")
+    print(full_path_file.parent)
+    print(full_path_file.stem)
 
 
 

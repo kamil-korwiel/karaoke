@@ -1,8 +1,8 @@
 # TODO List
 
 ## Inbox
-- [ ] Create a button to download a file
-- [ ] Proper way to initial a database (create init function)
+- [X] Create a button to download a file
+- [X] Proper way to initial a database (create init function)
 - [ ] Create a page where you can see a content of data base 
 - [ ] Create a function where you can get a info from website and convert to Audio object SQLDataBase
 - [ ] ? Create another static file that can get files (do przemyślenia)
