@@ -10,36 +10,14 @@
   <link rel="stylesheet" href="{{ url_for('static', path='css/BASE.css' ) }}">
 </head>
 <body>
+  {% include 'navbar.html' %}
   <div class="base-flex-container">
-    <div class="nav"></div>
-    <div class="main">
-      <h1>Karaoke</h1>
-      <!--  hx-swap is for targeted tag by id  -->
+    <div id="main" class="main">
       
-      <!-- <form hx-post="/url" hx-target="#url-show-container" hx-swap="outerHTML" hx-on:htmx:after-request="this.reset()">
+      <form hx-post="/url" hx-target="#url-show-container" hx-swap="outerHTML" hx-on:htmx:after-request="this.reset()">
         <input type="text" name="url" placeholder="Give me a YT url ...">
         <button type="submit">GET</button>
-      </form> -->
-      
-      <button hx-get="/audio" hx-trigger="click" hx-target="#audio-container" hx-swap="innerHTML">
-        Load & Play Audio
-      </button>
-      <div id="audio-container"></div>
-
-      <button id="download-btn" hx-get="/download/" hx-trigger="click" hx-swap="none" onclick="window.location='/download/'">
-        Download File
-      </button>
-
-      <script>
-        document.getElementById("download-btn").addEventListener("click", function (event) {
-            event.preventDefault();  // Prevent default navigation
-            let link = document.createElement("a");
-            link.href = "/download/";  // Set FastAPI download URL
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);  // Clean up after clicking
-        });
-    </script>
+      </form>
       
       <!-- {% include 'urlshow.html' %} -->
     </div>
@@ -50,3 +28,24 @@
   
 </body>
 </html>
+
+
+<!-- <button hx-get="/audio" hx-trigger="click" hx-target="#audio-container" hx-swap="innerHTML">
+  Load & Play Audio
+</button>
+<div id="audio-container"></div>
+
+<button id="download-btn" hx-get="/download/" hx-trigger="click" hx-swap="none" onclick="window.location='/download/'">
+  Download File
+</button> -->
+
+<!-- <script>
+  document.getElementById("download-btn").addEventListener("click", function (event) {
+      event.preventDefault();  // Prevent default navigation
+      let link = document.createElement("a");
+      link.href = "/download/";  // Set FastAPI download URL
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);  // Clean up after clicking
+  });
+</script> -->

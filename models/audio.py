@@ -2,8 +2,8 @@ from sqlmodel import Field, SQLModel, create_engine
 
 class Audio(SQLModel, table=True):
     id: int = Field(primary_key=True)
-    name_artist: str
-    name_song: str
+    name_artist: str | None
+    name_song: str | None
     full_title: str
     duration: int 
     channel: str | None

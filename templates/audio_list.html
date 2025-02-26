@@ -1,0 +1,18 @@
+<table>
+    <tr>
+      <th>Artist</th>
+      <th>Song</th>
+      <th>Duration</th>
+      <th>Channel</th>
+      <th>URL</th>
+    </tr>
+    {% for audio_info in audio_list %}
+    <tr>
+      <td>{{audio_info.name_artist}}</td>
+      <td>{{audio_info.name_song}}</td>
+      <td>{{audio_info.duration}}</td>
+      <td>{{audio_info.channel}}</td>
+      <td>{{audio_info.url}}</td>
+    </tr>
+    {% endfor %}
+</table>

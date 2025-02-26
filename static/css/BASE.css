@@ -16,9 +16,9 @@ body {
     height: 100vh; /* Full viewport height */
     gap: 10px;
 }
-.nav {
+/* .nav {
     height: 10%;
-}
+} */
 .main {
     display: flex;
     flex-direction: column;
@@ -32,6 +32,7 @@ body {
 form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    padding-top: 16px;
 }
   

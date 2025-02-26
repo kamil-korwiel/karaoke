@@ -14,7 +14,7 @@ from typing import Annotated, Union
 from fastapi import FastAPI, Header
 from fastapi import FastAPI, Form, Request, Header
 
-from sqlmodel import create_engine , Session 
+from sqlmodel import create_engine , Session ,select
 
 import os
 from loguru import logger
@@ -66,28 +66,29 @@ async def download_file():
 #         request=request, name="urlshow.html", context={"url": url_link}
 #     )
 
-@app.get("/audio", response_class=HTMLResponse)
-async def get_audio(request: Request, hx_request: Annotated[Union[str, None], Header()] = None):
-    with Session(engine) as session:
-        audio_info = session.get(Audio,1)
-
-    if hx_request:
-        return templates.TemplateResponse(
-            request=request, name="audio.html", context={ 'audio_info': audio_info }
-        )
-    
-
-# @app.get("/audio_list", response_class=HTMLResponse)
+# @app.get("/audio", response_class=HTMLResponse)
 # async def get_audio(request: Request, hx_request: Annotated[Union[str, None], Header()] = None):
-#     # ? How to cashing out a data
 #     with Session(engine) as session:
-#         statement = select(Audio)
-#         results = session.exec(statement)
-    
+#         audio_info = session.get(Audio,1)
+
 #     if hx_request:
 #         return templates.TemplateResponse(
-#             request=request, name="audio.html"
+#             request=request, name="audio.html", context={ 'audio_info': audio_info }
 #         )
+    
+
+@app.get("/audio_list", response_class=HTMLResponse)
+async def get_audio(request: Request, hx_request: Annotated[Union[str, None], Header()] = None):
+    # ? How to cashing out a data
+    if hx_request:
+        with Session(engine) as session:
+            statement = select(Audio)
+            results = session.exec(statement)
+            audios_infos = results.all()
+        logger.debug(audios_infos)
+        return templates.TemplateResponse(
+            request=request, name="audio_list.html", context= { 'audio_list': audios_infos }
+        )
 
 
 # @app.put("/todos/{todo_id}", response_class=HTMLResponse)
