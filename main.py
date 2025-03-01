@@ -18,7 +18,7 @@ from sqlmodel import create_engine , Session ,select
 
 import os
 from loguru import logger
-from utility import download_video, check_url, init_db
+from utility import check_url, init_db, extract_info_for_online_media, get_info
 from pathlib import Path
 
 """ This is set up database """
@@ -49,6 +49,32 @@ async def download_file():
         return {"error": "File not found"}
     return FileResponse(file_path,media_type="audio/wav", filename=audio_info.full_title)
 
+# @app.get("/audio_info", response_class=HTMLResponse)
+# async def get_audio(request: Request, hx_request: Annotated[Union[str, None], Header()] = None):
+#     with Session(engine) as session:
+#         audio_info = session.get(Audio,1)
+
+#     if hx_request:
+#         return templates.TemplateResponse(
+#             request=request, name="audio.html", context={ 'audio_info': audio_info }
+#         )
+
+@app.post("/audio_info", response_class=HTMLResponse)
+async def create_todo(request: Request, url: Annotated[str, Form()]):
+    if check_url(url):
+        try:
+            extracted_info = extract_info_for_online_media(logger,url)
+            audio_info = get_info(extracted_info)
+            audio = Audio(**audio_info)
+            return templates.TemplateResponse(
+                request=request, name="audio_info.html", context={ "audio_info": audio }
+            )
+        except Exception:
+            return templates.TemplateResponse(
+                request=request, name="error.html", context={ "error_message": "Not Valid Url" }
+            )
+    
+    
 
 # @app.get("/url", response_class=HTMLResponse)
 # async def get_url(request: Request, hx_request: Annotated[Union[str, None], Header()] = None):

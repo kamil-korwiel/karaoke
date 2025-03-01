@@ -1,0 +1,16 @@
+<style>
+    .error-message {
+        color: red;
+        font-weight: bold;
+        margin: 20px;
+        padding: 10px;
+        border: 1px solid red;
+        background-color: #fdd;
+    }
+</style>
+
+{% if error_message %}
+    <div class="error-message">
+        {{ error_message }}
+    </div>
+{% endif %}

@@ -19,23 +19,24 @@ def check_url(url:str) -> bool:
     else:
         return False
 
-def extract_info_for_online_media(logger, input_url) -> dict:
-    extracted_info = {}
+def extract_info_for_online_media(logger, input_url) -> dict|None:
+    extracted_info = None
     
     logger.info(f"Extracting info for input_url: {input_url}")
-    if input_url is not None:
-        # If a URL is provided, use it to extract the metadata
-        with ydl({"quiet": True}) as ydl_instance:
-            extracted_info = ydl_instance.extract_info(input_url, download=False)
+    with ydl({"quiet": True}) as ydl_instance:
+        extracted_info = ydl_instance.extract_info(input_url, download=False)
 
     return extracted_info
 
 def get_info(info:dict[str,str|int|list]) -> dict[str,str|int|list]:
+    
     title = info['title'].split('-')
     artist = None 
     song = None 
+
     if(len(title) == 2):
         artist, song = title
+    
     return {
         'url': info['webpage_url'],
         'name_artist':artist.strip() if artist else None,
@@ -43,7 +44,7 @@ def get_info(info:dict[str,str|int|list]) -> dict[str,str|int|list]:
         'full_title':info['title'],
         'duration':info['duration'],
         'channel':info['channel'],
-        'categories':info['categories'],
+        # 'categories':info['categories'],
     }
 
 def create_dirs(path:str):
@@ -131,8 +132,15 @@ def init_db(engine, name_file, DATABASE_URL:str):
 
 
 def main():
-    pass
-    # url = "https://www.youtube.com/watch?v=WrpwegGf75Q"
+    url = "https://www.youtube.com/watch?v=aghkdegGf75Q"
+    
+    if(check_url(url)):
+        extracted_info = extract_info_for_online_media(logger,url)
+        print(extracted_info)
+    #     audio_info = get_info(extracted_info)
+    #     audio = Audio(**audio_info)
+    # print(audio)
+
     # split_url = parse.urlsplit(url)
     # print(split_url)
     
@@ -149,9 +157,6 @@ def main():
     #         data = extract_info_for_online_media(logger,url)
     #         audio_info = get_info(data)
 
-    full_path_file = Path("./db/audio/Mitski - Washing machine heart (slowed)/Mitski - Washing machine heart (slowed).webm")
-    print(full_path_file.parent)
-    print(full_path_file.stem)
 
 
 

@@ -1,0 +1,8 @@
+{% if audio_info %}
+    <li>Artist: {{ audio_info.name_artist }}</li>
+    <li>Song: {{ audio_info.name_song }}</li>
+    <li>Duration: {{ audio_info.duration }}</li>
+    <li>Channel: {{ audio_info.channel }}</li>
+    <li>Url: {{ audio_info.url }}</li>
+    <li>File: {{ audio_info.file_path }}</li>
+{% endif %}

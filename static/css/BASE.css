@@ -1,10 +1,4 @@
-body {
-    /* display: flex; */
-    /* flex-direction: column; */
-    /* height: 100%; */
-    /* align-items: center;
-    align-items: stretch */
-    /* Make sure the body and html are 100% height */
+/* body {
     height: 100%; 
     margin: 0;
     padding: 0;
@@ -12,10 +6,10 @@ body {
 }
 .base-flex-container{
     display: flex;
-    flex-direction: column; /* Stack items vertically */
-    height: 100vh; /* Full viewport height */
+    flex-direction: column; 
+    height: 100vh; 
     gap: 10px;
-}
+} */
 /* .nav {
     height: 10%;
 } */
