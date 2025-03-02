@@ -18,7 +18,7 @@ from sqlmodel import create_engine , Session ,select
 
 import os
 from loguru import logger
-from utility import check_url, init_db, extract_info_for_online_media, get_info
+from utility import check_url, init_db, extract_info_for_online_media, get_info, get_audio_info, download_audio, convert_to_wav
 from pathlib import Path
 
 """ This is set up database """
@@ -39,15 +39,39 @@ url_link = Url(url="")
 async def index(request: Request):
     return templates.TemplateResponse(request=request, name="index.html", context={})
 
-@app.get("/download/")
-async def download_file():
-    with Session(engine) as session:
-        audio_info = session.get(Audio,1)
-    file_path = Path(audio_info.file_path)
-    logger.debug(file_path)
-    if not os.path.exists(file_path):
-        return {"error": "File not found"}
-    return FileResponse(file_path,media_type="audio/wav", filename=audio_info.full_title)
+
+@app.post("/download", response_class=HTMLResponse)
+async def create_todo(request: Request, url: Annotated[str, Form()]):
+    if check_url(url):
+        try:
+            audio = get_audio_info(url)
+            # Code be a error 
+            path_downloaded_file = download_audio(logger,url,Path("./tmp/dumps/audio"), audio.full_title)
+            path_file = convert_to_wav(logger,path_downloaded_file)
+            audio.file_path = str(path_file)
+            logger.debug(f"Path audio: {path_file}")
+
+            return templates.TemplateResponse(
+                request=request, name="audio_info.html", context={ "audio_info": audio }
+            )
+        except Exception:
+            return templates.TemplateResponse(
+                request=request, name="error.html", context={ "error_message": "Not Valid Url" }
+            )
+    else:
+        return templates.TemplateResponse(
+            request=request, name="error.html", context={ "error_message": "Link is NOT from youtube site" }
+        )
+
+# @app.get("/download/")
+# async def download_file():
+#     with Session(engine) as session:
+#         audio_info = session.get(Audio,1)
+#     file_path = Path(audio_info.file_path)
+#     logger.debug(file_path)
+#     if not os.path.exists(file_path):
+#         return {"error": "File not found"}
+#     return FileResponse(file_path,media_type="audio/wav", filename=audio_info.full_title)
 
 # @app.get("/audio_info", response_class=HTMLResponse)
 # async def get_audio(request: Request, hx_request: Annotated[Union[str, None], Header()] = None):

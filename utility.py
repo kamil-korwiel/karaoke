@@ -19,10 +19,9 @@ def check_url(url:str) -> bool:
     else:
         return False
 
-def extract_info_for_online_media(logger, input_url) -> dict|None:
+def extract_info_for_online_media(input_url) -> dict|None:
     extracted_info = None
     
-    logger.info(f"Extracting info for input_url: {input_url}")
     with ydl({"quiet": True}) as ydl_instance:
         extracted_info = ydl_instance.extract_info(input_url, download=False)
 
@@ -47,11 +46,11 @@ def get_info(info:dict[str,str|int|list]) -> dict[str,str|int|list]:
         # 'categories':info['categories'],
     }
 
-def create_dirs(path:str):
+def create_dirs(path:str|Path):
     if not os.path.exists(path):
         os.makedirs(path)
 
-def download_video(logger, url:str, path_folder:str, output_filename_no_extension:str):
+def download_video(logger, url:str, path_folder:str, output_filename_no_extension:str) -> str|None:
     logger.debug(f"Downloading media from URL {url} to filename {output_filename_no_extension} + (as yet) unknown extension")
     folder_path = Path(path_folder).joinpath(output_filename_no_extension)
     full_path = folder_path.joinpath(output_filename_no_extension)
@@ -76,7 +75,7 @@ def download_video(logger, url:str, path_folder:str, output_filename_no_extensio
             logger.error("No files found matching the download pattern.")
             return None
 
-def convert_to_wav(logger, path_input_filename):
+def convert_to_wav(logger, path_input_filename) -> Path|None:
     """Convert input audio to WAV format, with input validation."""
     # Validate input file exists and is readable
     if not os.path.isfile(path_input_filename):
@@ -100,7 +99,7 @@ def convert_to_wav(logger, path_input_filename):
     ffmpeg_command = f'{ffmpeg_base_command} -n -i "{path_input_filename}" "{path_output}"'
     logger.debug(f"Running command: {ffmpeg_command}")
     os.system(ffmpeg_command)
-    return path_output
+    return Path(path_output)
 
 def init_db(engine, name_file, DATABASE_URL:str):
     # Check if the database file exists
@@ -130,13 +129,29 @@ def init_db(engine, name_file, DATABASE_URL:str):
     else:
         logger.info("Database already exists, skipping initialization.")
 
+def get_audio_info(url) -> Audio:
+    extracted_info = extract_info_for_online_media(url)
+    audio_info = get_info(extracted_info)
+    audio = Audio(**audio_info)
+    return audio
+
+def download_audio(logger, url:str, path_to_folder:Path, output_filename_no_extension:str) -> Path:
+    create_dirs(path_to_folder)
+    path_or_name = download_video(logger,url,path_to_folder,output_filename_no_extension)
+    return Path(path_or_name)
+
 
 def main():
-    url = "https://www.youtube.com/watch?v=aghkdegGf75Q"
+    url = "https://www.youtube.com/watch?v=3Ngzk9h247I"
     
     if(check_url(url)):
-        extracted_info = extract_info_for_online_media(logger,url)
-        print(extracted_info)
+        logger.debug(f"Download Info from url: {url}")
+        audio = get_audio_info(url)
+        
+        path_downloaded_file = download_audio(logger,url,Path("./tmp/dumps/audio"), audio.full_title)
+        path_file = convert_to_wav(logger,path_downloaded_file)
+        logger.debug(f"Path-audio {path_file}")
+
     #     audio_info = get_info(extracted_info)
     #     audio = Audio(**audio_info)
     # print(audio)

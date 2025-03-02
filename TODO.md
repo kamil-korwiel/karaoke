@@ -4,9 +4,9 @@
 - [X] Create a button to download a file
 - [X] Proper way to initial a database (create init function)
 - [X] Create a page where you can see a content of data base 
-- [ ] Create a function where you can get a info from website and convert to Audio object SQLDataBase
-- [ ] ? Create another static file that can get files (do przemyślenia)
-- [ ] after downloading audio from url need for create a flow of errors
+- [X] Create a function where you can get a info from website and convert to Audio object SQLDataBase
+- [ ] Downloading and converting a music video to .wav format
+
 - [ ] ? Create a simple loading base of data, like 1 to 100 percent 
 - [ ] ??? Thought like git hub have a process of what is happening inside a server
     
@@ -28,4 +28,4 @@
 - [ ] None
 
 ## Low Priority
-- [ ] None
+- [ ] after downloading audio from url need for create a flow of errors
